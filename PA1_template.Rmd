@@ -7,19 +7,80 @@ output:
 
 
 ## Loading and preprocessing the data
-
-
-
+1. Load the data
+```{r loadData, echo=TRUE}
+unzip("activity.zip")
+activity <- read.csv("activity.csv", na.strings = 'NA')
+```
 ## What is mean total number of steps taken per day?
+- Aggregate steps by date
+```{r}
+sum_by_date <- aggregate(activity$steps, by= list(activity$date), FUN = sum)
+names(sum_by_date) <- c("Date","Steps")
+sum_by_date
+```
 
+- Histogram of the total number of steps taken each day
+```{r hist, echo=T}
+hist(sum_by_date$Steps, xlab = "Steps", main = "Histogram of Steps By Date")
+```
 
+- Mean of the total number of steps taken per day
+```{r}
+mean(sum_by_date[!is.na(sum_by_date$Steps),2])
+```
+
+- Median of the total number of steps taken per day
+```{r}
+median(sum_by_date$Steps,na.rm = T)
+```
 
 ## What is the average daily activity pattern?
+```{r}
+avr <- aggregate(activity[!is.na(activity$steps), 1] , by= list(activity[ !is.na(activity$steps), 3]), FUN = mean)
+names(avr) <- c("Interval", "Steps")
+plot(avr, type = "l", xlab = "5-minute interval", ylab = "Average number of steps taken accross all days")
+```
 
-
-
+- Interval with maximum of steps
+```{r}
+avr[ avr$Steps == max(avr$Steps), ]
+```
 ## Imputing missing values
+- Total number of missing values in the dataset 
+```{r}
+incompelte <- activity[is.na(activity$steps), ]
+length(incompelte$steps)
+```
 
+- Create a new dataset that is equal to the original dataset but with the missing data filled in
+```{r}
+incompelte$steps <- avr[ avr$Interval %in% incompelte$interval, 2]
+new_activity <- activity
+new_activity[is.na(new_activity$steps), ] <- avr[ avr$Interval %in% incompelte$interval, 2]
+```
 
+- Aggregate steps by date
+```{r}
+new_sum_by_date <- aggregate(new_activity$steps, by= list(new_activity$date), FUN = sum)
+names(new_sum_by_date) <- c("Date","Steps")
+new_sum_by_date
+```
 
+- Histogram of the total number of steps taken each day
+```{r newhist, echo=T}
+hist(new_sum_by_date$Steps, xlab = "Steps", main = "New Histogram of Steps By Date")
+```
+
+- Mean of the total number of steps taken per day
+```{r}
+mean(new_sum_by_date[!is.na(new_sum_by_date$Steps),2])
+```
+
+- Median of the total number of steps taken per day
+```{r}
+median(new_sum_by_date$Steps,na.rm = T)
+```
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
