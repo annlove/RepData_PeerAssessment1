@@ -13,11 +13,11 @@ unzip("activity.zip")
 activity <- read.csv("activity.csv", na.strings = 'NA')
 ```
 ## What is mean total number of steps taken per day?
-- Aggregate steps by date
+- Aggregate steps by date. Here is first few rows of result
 ```{r}
 sum_by_date <- aggregate(activity$steps, by= list(activity$date), FUN = sum)
 names(sum_by_date) <- c("Date","Steps")
-sum_by_date
+head(sum_by_date)
 ```
 
 - Histogram of the total number of steps taken each day
@@ -53,11 +53,11 @@ incompelte <- activity[is.na(activity$steps), ]
 length(incompelte$steps)
 ```
 
-- Create a new dataset that is equal to the original dataset but with the missing data filled in
+- Create a new dataset that is equal to the original dataset but with the missing data filled in with average steps of that interval.
 ```{r}
 incompelte$steps <- avr[ avr$Interval %in% incompelte$interval, 2]
 new_activity <- activity
-new_activity[is.na(new_activity$steps), ] <- avr[ avr$Interval %in% incompelte$interval, 2]
+new_activity[is.na(new_activity$steps), 1] <- avr[ avr$Interval %in% incompelte$interval, 2]
 ```
 
 - Aggregate steps by date
@@ -82,5 +82,26 @@ mean(new_sum_by_date[!is.na(new_sum_by_date$Steps),2])
 median(new_sum_by_date$Steps,na.rm = T)
 ```
 ## Are there differences in activity patterns between weekdays and weekends?
+
+- Aggregate steps by date
+```{r}
+Sys.setlocale("LC_TIME", "C")
+isweekend_sum_by_date <- new_activity
+isweekend_sum_by_date$weekdays <- as.factor(weekdays(as.POSIXct(new_activity$date)));
+isweekend_sum_by_date$isWeekend <- as.factor(ifelse(isweekend_sum_by_date$weekdays %in% c("Saturday","Sunday"), "weekend","weekday"));
+isweekend_sum_by_date <- aggregate(new_activity$steps, by= list(new_activity$interval, isweekend_sum_by_date$isWeekend), FUN = mean)
+names(isweekend_sum_by_date) <- c("Interval","isWeekday","Steps")
+
+head(isweekend_sum_by_date)
+```
+
+- Histogram of the total number of steps taken each day
+```{r, echo=T}
+# install.packages("ggplot2")
+
+library(ggplot2)
+g <- ggplot(isweekend_sum_by_date,  aes( x = Interval, y = Steps)) 
+g  + geom_line( aes(group = isWeekday) ) + facet_grid( isWeekday ~ .) + scale_x_discrete( breaks = seq(from = 0, to= max(isweekend_sum_by_date$Interval), by = 250))
+```
 
 
