@@ -36,7 +36,7 @@ median(sum_by_date$Steps,na.rm = T)
 ```
 
 ## What is the average daily activity pattern?
-```{r}
+```{r activityPattern}
 avr <- aggregate(activity[!is.na(activity$steps), 1] , by= list(activity[ !is.na(activity$steps), 3]), FUN = mean)
 names(avr) <- c("Interval", "Steps")
 plot(avr, type = "l", xlab = "5-minute interval", ylab = "Average number of steps taken accross all days")
@@ -96,7 +96,7 @@ head(isweekend_sum_by_date)
 ```
 
 - Histogram of the total number of steps taken each day
-```{r, echo=T}
+```{r histByWeekdays, echo=T}
 # install.packages("ggplot2")
 
 library(ggplot2)

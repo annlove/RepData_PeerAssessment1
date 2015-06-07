@@ -63,7 +63,7 @@ names(avr) <- c("Interval", "Steps")
 plot(avr, type = "l", xlab = "5-minute interval", ylab = "Average number of steps taken accross all days")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+![](PA1_template_files/figure-html/activityPattern-1.png) 
 
 - Interval with maximum of steps
 
@@ -237,6 +237,6 @@ g <- ggplot(isweekend_sum_by_date,  aes( x = Interval, y = Steps))
 g  + geom_line( aes(group = isWeekday) ) + facet_grid( isWeekday ~ .) + scale_x_discrete( breaks = seq(from = 0, to= max(isweekend_sum_by_date$Interval), by = 250))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
+![](PA1_template_files/figure-html/histByWeekdays-1.png) 
 
 
